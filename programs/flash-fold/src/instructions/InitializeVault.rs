@@ -16,8 +16,22 @@ pub struct InitializeVault<'info>{
         bump
     )]
     pub vault: Box<Account<'info,Vault>>,
+    #[account(mut)]
+    pub mint: Box<InterfaceAccount<'info, Mint>>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
+}
 
+impl<'info> InitializeVault<'info>{
+    pub fn initialize(&mut self) -> Result<()>{
+        let vault = &mut self.vault;
+        vault.owner = self.authority.key();
+        vault.vault_balance = 0 ;
+        vault.mint_account = self.mint.key();
+        
+        msg!("Vault Initialized..")
+
+        Ok(())
+    }
 }
